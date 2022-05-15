@@ -59,3 +59,100 @@ sptBClstRds <- function(files,data1, data2, path){
 
   return(returnList)
 }
+
+
+
+
+
+
+
+#' Count Ref and Mutant Reads for Each Spot
+#'
+#' @param index A Dataframe of spatial barcode
+#' @param files Vector of paths of samtools Mpileup output of each spot
+#'
+#' @importFrom utils read.delim
+#'
+#' @return A list of two dataframe
+#' @export
+#'
+#' @examples \dontrun{
+#' index <- read.csv(system.file("extdata/","spotBC.csv", package = "stmut"), header = TRUE)
+#' files2 <- list.files(path = system.file("extdata/mpileup", package = "stmut"),
+#'     pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
+#' }
+#'
+sptMutCt <- function(index, files){
+
+  stopifnot(is.character(files), is.data.frame(index))
+  Rcount <- NULL
+
+  nr = dim(index)[1] # how many spots
+  groups <- rep(0,nr)
+  matx <- data.frame(matrix(nrow = nr, ncol = 6))
+  colnames(matx) <- c("spot","RreadC", "MreadC","Treads","groups","barcode")
+
+  lapply(files, function(x){
+
+    # extract spot name
+    sptNs <- str_split(x, "/", simplify = TRUE)
+    idx <- pmatch("spot", sptNs) # partial match
+    sptN <- sptNs[idx]
+    i <- as.numeric(substr(sptN,5, nchar(sptN))) + 1 # the number of spot;spot name starts with 0000, r start with 1
+
+    # read the Mpileup file
+    spot <- read.delim(x, header = FALSE, sep = "\t", quote = "")
+    spot[1,9] <- "Rcount"
+    spot[1,10] <- "Mcount"
+    cn <- spot[1,] # extract column name
+    spt <- spot[-1,]
+    colnames(spt) <- cn
+    spt <- spt[,c(9,10)]
+    df <- spt %>% filter(! Rcount == "Manually Inspect") %>% filter(! Rcount == "Manually Inspect")
+    df$Rcount <- as.numeric(df$Rcount)
+    df$Mcount <- as.numeric(df$Mcount)
+
+    a <- sum(df$Rcount)
+    b <- sum(df$Mcount)
+
+    #matx[i,1] <- spots[i]
+    matx[i,1] <<- sptN
+    matx[i,2] <<- a
+    matx[i,3] <<- b
+    matx[i,4] <<- a + b
+    matx[i,6] <<- index[which(index$spot == sptN),1]
+
+    # add group name for Loupe browser
+    if (matx[i,4] == 0){
+      matx[i,5] <<- "G0"
+    }else if (matx[i,4] == 1){
+      matx[i,5] <<- "G1"
+    }else if(matx[i,4]==2){
+      matx[i,5] <<- "G2"
+    }else if(matx[i,4]==3){
+      matx[i,5] <<- "G3"
+    }else if(matx[i,4]==4){
+      matx[i,5] <<- "G4"
+    }else if(matx[i,4]==5){
+      matx[i,5] <<- "G5"
+    }else if(matx[i,4]==6){
+      matx[i,5] <<- "G6"
+    }else if(matx[i,4]==7){
+      matx[i,5] <<- "G7"
+    }else if(matx[i,4]==8){
+      matx[i,5] <<- "G8"
+    }else if(matx[i,4]==9){
+      matx[i,5] <<- "G9"
+    } else {
+      matx[i,5] <<- "G10"
+    }
+  })
+
+  final <- matx[order(matx$MreadC, decreasing = TRUE),]
+  LoupeFile <- final[,c(6,5)]
+  colnames(LoupeFile) <- c("index", "groups")
+  returnList <- list(final,LoupeFile)
+}
+
+
+

@@ -36,34 +36,40 @@ Have your data ready:
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example of how to run sptBClstRds function:
 
 ```{r example}
-library(stmut)
-## basic example code
-files <- list.files(path = "./inst/extdata/spotIndex", pattern = ".txt", full.names = TRUE, recursive = FALSE)
-data1 <- read.csv("./inst/extdata/filtered_feature_bc.csv", header = TRUE)
-data2 <- read.csv("./inst/extdata/Graph-Based.csv", header = TRUE)
-path <- "./inst/extdata/tissue_positions_list.csv"
-df <- sptBClstRds(files=files,data1=data1, data2=data2, path=path)
-
-head(df[[1]])
-head(df[[2]])
+ library(stmut)
+# ## basic example code
+# files <- list.files(path = "./inst/extdata/spotIndex", pattern = ".txt", full.names = TRUE, recursive = FALSE)
+# data1 <- read.csv("./inst/extdata/filtered_feature_bc.csv", header = TRUE)
+# data2 <- read.csv("./inst/extdata/Graph-Based.csv", header = TRUE)
+# path <- "./inst/extdata/tissue_positions_list.csv"
+# df <- sptBClstRds(files=files,data1=data1, data2=data2, path=path)
+# 
+# head(df[[1]])
+# head(df[[2]])
+?sptBClstRds
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 
-```{r cars}
-summary(cars)
+An example on how to run sptMutCt()
+```{r example2}
+library(stmut)
+index <- read.csv("./inst/extdata/spotBC.csv", header = TRUE)
+files2 <- list.files(path = "./inst/extdata/mpileup",pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
+df1 <- sptMutCt(index = index, files = files2)
+
+head(df1[[1]])
+head(df1[[2]])
+
+
 ```
 
 You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
 
 You can also embed plots, for example:
 
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
 
 
 

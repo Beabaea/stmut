@@ -49,3 +49,34 @@
 #'   \item{path}{a character}
 #' }
 "path"
+
+
+
+
+#' Sample Data for sptMutCt Function
+#'
+#' @description First input for sptMutCt
+#'
+#' @format A data frame with 10 rows and 3 variables
+#' \describe{
+#'   \item{barcode}{the spatial barcode of spots}
+#'   \item{spot}{the spot name}
+#'   \item{TotalRDs}{the total number reads of each spot}
+#' }
+"index"
+
+
+#' Sample Data for sptMutCt Function
+#'
+#' @description Second input for sptBClstRds
+#'
+#' @format A vector containing all spots samtools mpileup output path
+#' \describe{
+#'   \item{files2}{a character}
+#' }
+"files2"
+
+
+
+
+
