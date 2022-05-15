@@ -62,10 +62,6 @@ sptBClstRds <- function(files,data1, data2, path){
 
 
 
-
-
-
-
 #' Count Ref and Mutant Reads for Each Spot
 #'
 #' @param index A Dataframe of spatial barcode
@@ -80,8 +76,8 @@ sptBClstRds <- function(files,data1, data2, path){
 #' index <- read.csv(system.file("extdata/","spotBC.csv", package = "stmut"), header = TRUE)
 #' files2 <- list.files(path = system.file("extdata/mpileup", package = "stmut"),
 #'     pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
+#' df1 <- sptMutCt(index=index, files=files2)
 #' }
-#'
 sptMutCt <- function(index, files){
 
   stopifnot(is.character(files), is.data.frame(index))
@@ -153,6 +149,37 @@ sptMutCt <- function(index, files){
   colnames(LoupeFile) <- c("index", "groups")
   returnList <- list(final,LoupeFile)
 }
+
+
+
+#' Generate Non-zero Reads Spot Comprehensive Table
+#'
+#' @param df1 first input: spotBClsterRds.csv
+#' @param df2 second input: spotRdCtFinal.csv
+#'
+#' @return  A list of two dataframes
+#' @export
+#'
+#' @examples \dontrun{
+#'
+#' d1 <- read.csv(system.file("extdata/","spotBClster.csv", package = stmut), header = TRUE)
+#' d1 <- read.csv(system.file("extdata/","spotRdCtFinal.csv", package = stmut), header = TRUE)
+#' df3 <- nonZeRdCts(df1 = d1, df2 = d2)
+#'
+#' }
+nonZeRdCts <- function(df1, df2){
+  MreadC <- NULL
+  Treads <- NULL
+  df <- merge(df1,df2,by=c("barcode","spot"))
+  df3 <- df %>% filter(Treads != 0) # filter out spots with 0 reads
+  df4 <- df %>% filter(MreadC != 0) # keep spots with mutant reads
+  returnList <- list(df3, df4)
+  return(returnList)
+}
+
+
+
+
 
 
 

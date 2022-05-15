@@ -78,5 +78,34 @@
 
 
 
+#' Sample Data for nonZeRdCts Function
+#'
+#' @description First input for nonZeRdCts
+#'
+#' @format A data frame with 10 rows and 6 variables
+#' \describe{
+#'   \item{barcode}{the spatial barcode of spots}
+#'   \item{cluster}{the cluster the spot belongs to}
+#'   \item{spot}{the spot name}
+#'   \item{TotalRDs}{the total number of reads of each spot}
+#'   \item{array_row}{spot row position}
+#'   \item{array_col}{spot col position}
+#' }
+"d1"
 
+#' Sample Data for nonZeRdCts Function
+#'
+#' @description Second input for nonZeRdCts
+#'
+#' @format A data frame with 5 rows and 6 variables
+#' \describe{
+#'   \item{spot}{the spot name}
+#'   \item{RreadC}{reference read counts}
+#'   \item{MreadC}{Mutant reads counts}
+#'   \item{Treads}{the sum of RreadC and MreadC}
+#'   \item{groups}{if MreadC == 0, the spot will given "G0", if MreadC == 1, the spot will given "G1",
+#'   .... if MreadC > 9, the spot will given "G10"}
+#'   \item{barcode}{the spatial barcode of spots}
+#' }
+"d2"
 

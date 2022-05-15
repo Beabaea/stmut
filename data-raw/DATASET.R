@@ -14,18 +14,25 @@ usethis::use_data(path, overwrite = TRUE)
 
 
 
-# test data for sptMutCt function
-write.csv(df[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBC.csv", row.names = FALSE)
-write.csv(df[[2]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBClster.csv", row.names = FALSE)
+# # test data for sptMutCt function
+# write.csv(df[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBC.csv", row.names = FALSE)
+# write.csv(df[[2]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBClster.csv", row.names = FALSE)
 
 index <- read.csv("/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBC.csv", header = TRUE)
 files2 <- list.files(path = "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/mpileup",pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
 usethis::use_data(index, compress = "xz", overwrite = TRUE)
 usethis::use_data(files2, compress = "xz", overwrite = TRUE)
-write.csv(df1[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotRdCtFinal.csv", row.names = FALSE)
-write.csv(df1[[2]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotMutReadCount.csv", row.names = FALSE)
+# write.csv(df1[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotRdCtFinal.csv", row.names = FALSE)
+# write.csv(df1[[2]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotMutReadCount.csv", row.names = FALSE)
 
 
+# test data for nonZeRdCts function
+d1 <- read.csv("/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBClster.csv", header = TRUE)
+d2 <- read.csv("/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotRdCtFinal.csv", header = TRUE)
+usethis::use_data(d1, compress = "xz", overwrite = TRUE)
+usethis::use_data(d2, compress = "xz", overwrite = TRUE)
+# write.csv(df3[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/NonZeroRdSpotIndex.csv", row.names = FALSE)
+# write.csv(df3[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/MutantSpotIndex.csv", row.names = FALSE)
 
 
 
