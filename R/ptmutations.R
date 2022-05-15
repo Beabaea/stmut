@@ -13,46 +13,49 @@
 #' @export
 #'
 #' @examples \dontrun{
-#' files <- list.files(path = system.file("extdata/spotIndex",package = "stmut"),
-#'     pattern = ".txt", full.names = TRUE, recursive = FALSE)
-#' data1 <- read.csv(system.file("extdata/","filtered_feature_bc.csv",
-#'     package = "stmut"), header = TRUE)
-#' data2 <- read.csv(system.file("extdata/","Graph-Based.csv", package = "stmut"), header = TRUE)
-#' path <- system.file("extdata/","tissue_positions_list.csv", package = "stmut")
-#' df <- sptBClstRds(files=files,data1=data1, data2=data2, path=path)
+#' files <- list.files(
+#'   path = system.file("extdata/spotIndex", package = "stmut"),
+#'   pattern = ".txt", full.names = TRUE, recursive = FALSE
+#' )
+#' data1 <- read.csv(system.file("extdata/", "filtered_feature_bc.csv",
+#'   package = "stmut"
+#' ), header = TRUE)
+#' data2 <- read.csv(system.file("extdata/", "Graph-Based.csv", package = "stmut"), header = TRUE)
+#' path <- system.file("extdata/", "tissue_positions_list.csv", package = "stmut")
+#' df <- sptBClstRds(files = files, data1 = data1, data2 = data2, path = path)
 #' }
-sptBClstRds <- function(files,data1, data2, path){
+sptBClstRds <- function(files, data1, data2, path) {
   stopifnot(is.character(files), is.data.frame(data1), is.data.frame(data2), is.character(path))
 
   barcode <- NULL # this code to avoid the note "no visible binding for global variable ‘barcode’"
   nrow <- length(colnames(data1)[-1])
 
   # Count total reads of each spot
-  data1 <- data1[,-1]
-  df0 <- data.frame(colnames(data1),colSums(data1)) # spotBcode and total reads of each spot
+  data1 <- data1[, -1]
+  df0 <- data.frame(colnames(data1), colSums(data1)) # spotBcode and total reads of each spot
   colnames(df0) <- c("barcode", "TotalRDs")
-  df0$barcode <- str_replace(df0$barcode,".1","-1")
+  df0$barcode <- str_replace(df0$barcode, ".1", "-1")
   df1 <- data.frame(matrix(nrow = nrow, ncol = 2))
-  lapply(files, function(x){
+  lapply(files, function(x) {
     tab <- read.table(x, sep = "\t", header = FALSE)
-    spts <- str_split(x,"/", simplify = TRUE)
-    spts <- str_split(x,"/", simplify = TRUE)[length(spts)]
-    sptn <- substr(spts,1,(nchar(spts)-4))
-    i <- as.numeric(substr(sptn,5,nchar(spts))) + 1
-    df1[i,1] <<- tab[1,1]
-    df1[i,2] <<- sptn
+    spts <- str_split(x, "/", simplify = TRUE)
+    spts <- str_split(x, "/", simplify = TRUE)[length(spts)]
+    sptn <- substr(spts, 1, (nchar(spts) - 4))
+    i <- as.numeric(substr(sptn, 5, nchar(spts))) + 1
+    df1[i, 1] <<- tab[1, 1]
+    df1[i, 2] <<- sptn
   })
-  colnames(df1) <- c("barcode","spot")
+  colnames(df1) <- c("barcode", "spot")
   df1 <- merge(df1, df0, by = "barcode")
 
   # generate barcode-spotName-cluster dataframe
-  colnames(data2) <- c("barcode","cluster")
-  df2 <- merge(data2,df1, by = "barcode")
+  colnames(data2) <- c("barcode", "cluster")
+  df2 <- merge(data2, df1, by = "barcode")
 
   # add spot coordinates
   spotloc <- read.csv(path, header = FALSE)
-  colnames(spotloc) <- c("barcode","in_tissue","array_row","array_col","pxl_row_in_fullres","pxl_col_in_fullres")
-  spotloc <- spotloc[,c(1,3,4)]
+  colnames(spotloc) <- c("barcode", "in_tissue", "array_row", "array_col", "pxl_row_in_fullres", "pxl_col_in_fullres")
+  spotloc <- spotloc[, c(1, 3, 4)]
   spotloc <- spotloc %>% filter(barcode %in% df2$barcode)
   df2 <- merge(df2, spotloc, by = "barcode")
   returnList <- list(df1, df2)
@@ -73,81 +76,84 @@ sptBClstRds <- function(files,data1, data2, path){
 #' @export
 #'
 #' @examples \dontrun{
-#' index <- read.csv(system.file("extdata/","spotBC.csv", package = "stmut"), header = TRUE)
-#' files2 <- list.files(path = system.file("extdata/mpileup", package = "stmut"),
-#'     pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
-#' df1 <- sptMutCt(index=index, files=files2)
+#' index <- read.csv(system.file("extdata/", "spotBC.csv", package = "stmut"), header = TRUE)
+#' files2 <- list.files(
+#'   path = system.file("extdata/mpileup", package = "stmut"),
+#'   pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE
+#' )
+#' df1 <- sptMutCt(index = index, files = files2)
 #' }
-sptMutCt <- function(index, files){
-
+sptMutCt <- function(index, files) {
   stopifnot(is.character(files), is.data.frame(index))
   Rcount <- NULL
 
-  nr = dim(index)[1] # how many spots
-  groups <- rep(0,nr)
+  nr <- dim(index)[1] # how many spots
+  groups <- rep(0, nr)
   matx <- data.frame(matrix(nrow = nr, ncol = 6))
-  colnames(matx) <- c("spot","RreadC", "MreadC","Treads","groups","barcode")
+  colnames(matx) <- c("spot", "RreadC", "MreadC", "Treads", "groups", "barcode")
 
-  lapply(files, function(x){
+  lapply(files, function(x) {
 
     # extract spot name
     sptNs <- str_split(x, "/", simplify = TRUE)
     idx <- pmatch("spot", sptNs) # partial match
     sptN <- sptNs[idx]
-    i <- as.numeric(substr(sptN,5, nchar(sptN))) + 1 # the number of spot;spot name starts with 0000, r start with 1
+    i <- as.numeric(substr(sptN, 5, nchar(sptN))) + 1 # the number of spot;spot name starts with 0000, r start with 1
 
     # read the Mpileup file
     spot <- read.delim(x, header = FALSE, sep = "\t", quote = "")
-    spot[1,9] <- "Rcount"
-    spot[1,10] <- "Mcount"
-    cn <- spot[1,] # extract column name
-    spt <- spot[-1,]
+    spot[1, 9] <- "Rcount"
+    spot[1, 10] <- "Mcount"
+    cn <- spot[1, ] # extract column name
+    spt <- spot[-1, ]
     colnames(spt) <- cn
-    spt <- spt[,c(9,10)]
-    df <- spt %>% filter(! Rcount == "Manually Inspect") %>% filter(! Rcount == "Manually Inspect")
+    spt <- spt[, c(9, 10)]
+    df <- spt %>%
+      filter(!Rcount == "Manually Inspect") %>%
+      filter(!Rcount == "Manually Inspect")
     df$Rcount <- as.numeric(df$Rcount)
     df$Mcount <- as.numeric(df$Mcount)
 
     a <- sum(df$Rcount)
     b <- sum(df$Mcount)
 
-    #matx[i,1] <- spots[i]
-    matx[i,1] <<- sptN
-    matx[i,2] <<- a
-    matx[i,3] <<- b
-    matx[i,4] <<- a + b
-    matx[i,6] <<- index[which(index$spot == sptN),1]
+    # matx[i,1] <- spots[i]
+    matx[i, 1] <<- sptN
+    matx[i, 2] <<- a
+    matx[i, 3] <<- b
+    matx[i, 4] <<- a + b
+    matx[i, 6] <<- index[which(index$spot == sptN), 1]
 
     # add group name for Loupe browser
-    if (matx[i,4] == 0){
-      matx[i,5] <<- "G0"
-    }else if (matx[i,4] == 1){
-      matx[i,5] <<- "G1"
-    }else if(matx[i,4]==2){
-      matx[i,5] <<- "G2"
-    }else if(matx[i,4]==3){
-      matx[i,5] <<- "G3"
-    }else if(matx[i,4]==4){
-      matx[i,5] <<- "G4"
-    }else if(matx[i,4]==5){
-      matx[i,5] <<- "G5"
-    }else if(matx[i,4]==6){
-      matx[i,5] <<- "G6"
-    }else if(matx[i,4]==7){
-      matx[i,5] <<- "G7"
-    }else if(matx[i,4]==8){
-      matx[i,5] <<- "G8"
-    }else if(matx[i,4]==9){
-      matx[i,5] <<- "G9"
+    if (matx[i, 4] == 0) {
+      matx[i, 5] <<- "G0"
+    } else if (matx[i, 4] == 1) {
+      matx[i, 5] <<- "G1"
+    } else if (matx[i, 4] == 2) {
+      matx[i, 5] <<- "G2"
+    } else if (matx[i, 4] == 3) {
+      matx[i, 5] <<- "G3"
+    } else if (matx[i, 4] == 4) {
+      matx[i, 5] <<- "G4"
+    } else if (matx[i, 4] == 5) {
+      matx[i, 5] <<- "G5"
+    } else if (matx[i, 4] == 6) {
+      matx[i, 5] <<- "G6"
+    } else if (matx[i, 4] == 7) {
+      matx[i, 5] <<- "G7"
+    } else if (matx[i, 4] == 8) {
+      matx[i, 5] <<- "G8"
+    } else if (matx[i, 4] == 9) {
+      matx[i, 5] <<- "G9"
     } else {
-      matx[i,5] <<- "G10"
+      matx[i, 5] <<- "G10"
     }
   })
 
-  final <- matx[order(matx$MreadC, decreasing = TRUE),]
-  LoupeFile <- final[,c(6,5)]
+  final <- matx[order(matx$MreadC, decreasing = TRUE), ]
+  LoupeFile <- final[, c(6, 5)]
   colnames(LoupeFile) <- c("index", "groups")
-  returnList <- list(final,LoupeFile)
+  returnList <- list(final, LoupeFile)
 }
 
 
@@ -161,16 +167,14 @@ sptMutCt <- function(index, files){
 #' @export
 #'
 #' @examples \dontrun{
-#'
-#' d1 <- read.csv(system.file("extdata/","spotBClster.csv", package = stmut), header = TRUE)
-#' d1 <- read.csv(system.file("extdata/","spotRdCtFinal.csv", package = stmut), header = TRUE)
+#' d1 <- read.csv(system.file("extdata/", "spotBClster.csv", package = stmut), header = TRUE)
+#' d1 <- read.csv(system.file("extdata/", "spotRdCtFinal.csv", package = stmut), header = TRUE)
 #' df3 <- nonZeRdCts(df1 = d1, df2 = d2)
-#'
 #' }
-nonZeRdCts <- function(df1, df2){
+nonZeRdCts <- function(df1, df2) {
   MreadC <- NULL
   Treads <- NULL
-  df <- merge(df1,df2,by=c("barcode","spot"))
+  df <- merge(df1, df2, by = c("barcode", "spot"))
   df3 <- df %>% filter(Treads != 0) # filter out spots with 0 reads
   df4 <- df %>% filter(MreadC != 0) # keep spots with mutant reads
   returnList <- list(df3, df4)
@@ -178,8 +182,59 @@ nonZeRdCts <- function(df1, df2){
 }
 
 
+#' Rank Spots with Mutant Reads using A Customized Strategy
+#'
+#' @param df A dataframe of nonZeroRdSpotIndex.csv
+#' @param path1 A path to where spot mutant reads statistic file is located
+#'
+#' @return A comprehensive table mutant information of each spot
+#' @export
+#'
+#' @examples \dontrun{
+#' df <- read.csv(system.file("extdata/", "NonZeroRdSpotIndex.csv", package = stmut), header = TRUE)
+#' path1 <- list.files(path = system.file("extdata/mpileup", package = "stmut"))
+#' df4 <- spotSummary(df = df, path1 = path1)
+#' }
+spotSummary <- function(df, path1) {
+  MreadC <- NULL
+  mutCt <- NULL
+  propM2Total <- df$MreadC / df$TotalRDs * 10000 # add first variable
+  propM2SumRM <- df$MreadC / df$Treads # add second variable
+  MoreThan1Mrd <- rep(0, dim(df)[1])
+  Score <- rep(0, dim(df)[1])
+  df <- cbind(df, propM2Total, propM2SumRM, MoreThan1Mrd, Score)
 
+  # add third variable, give a bonus for spot with more than one mutant read
+  for (j in 1:dim(df)[1]) {
+    if (df[j, "MreadC"] > 1) {
+      df[j, "MoreThan1Mrd"] <- 1
+      df[j, "Score"] <- df[j, "propM2Total"] + df[j, "MoreThan1Mrd"] # add third variable
+    } else {
+      df[j, "MoreThan1Mrd"] <- 0
+      df[j, "Score"] <- df[j, "propM2Total"] + df[j, "MoreThan1Mrd"]
+    }
+  }
 
+  # extract gene names that containing mutant reads
+  data <- df
 
+  for (sp in data$spot) { # add mutant read gene names
+    p <- paste0(path1, sp, "/MpileupOutput_RNA.txt")
+    mpilp <- read.delim(p, header = FALSE, sep = "\t")
+    mpilp[1, 9] <- "refCt"
+    mpilp[1, 10] <- "mutCt"
+    colnames(mpilp) <- mpilp[1, ]
+    mpilp <- mpilp[-1, ]
+    mpilpMut <- mpilp %>% filter(!(mutCt == "0" | mutCt == "Manually Inspect"))
 
+    GenesWithMutRead <- ""
+    for (i in 1:dim(mpilpMut)[1]) {
+      GenesWithMutRead <- paste0(GenesWithMutRead, mpilpMut[i, 1], "-", mpilpMut[i, 2], ":", mpilpMut[i, 3], " ", mpilpMut[i, 5], ">", mpilpMut[i, 6], ";")
+    }
+    data[which(data$spot == sp), "GenesWithMutRead"] <- GenesWithMutRead
+  }
 
+  data <- data[order(data$Score, decreasing = TRUE), ] # higher the score, much likely the tumor spots
+  data <- data %>% filter(MreadC > 0)
+  return(data)
+}

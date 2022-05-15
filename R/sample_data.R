@@ -109,3 +109,36 @@
 #' }
 "d2"
 
+
+
+
+
+#' Sample Data for spotSummary Function
+#'
+#' @description First input for spotSummary
+#'
+#' @format A data frame with 5 rows and 10 variables
+#' \describe{
+#'   \item{barcode}{the spatial barcode of spots}
+#'   \item{spot}{the spot name}
+#'   \item{cluster}{the cluster the spot belongs to}
+#'   \item{TotalRDs}{the total number of reads of each spot}
+#'   \item{array_row}{spot row position}
+#'   \item{array_col}{spot col position}
+#'   \item{RreadC}{reference read counts}
+#'   \item{MreadC}{Mutant reads counts}
+#'   \item{Treads}{the sum of RreadC and MreadC}
+#'   \item{groups}{if MreadC == 0, the spot will given "G0", if MreadC == 1, the spot will given "G1",
+#'   .... if MreadC > 9, the spot will given "G10"}
+#' }
+"df"
+
+#' Sample Data for spotSummary Function
+#'
+#' @description Second input for spotSummary
+#'
+#' @format A path to spot Mpileup file
+#' \describe{
+#'   \item{path}{a character}
+#' }
+"path1"

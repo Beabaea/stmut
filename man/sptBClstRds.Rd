@@ -23,12 +23,15 @@ Visualize Somatic Alterations of fresh frozen Spatial Transcriptomics Data
 }
 \examples{
 \dontrun{
-files <- list.files(path = system.file("extdata/spotIndex",package = "stmut"),
-    pattern = ".txt", full.names = TRUE, recursive = FALSE)
-data1 <- read.csv(system.file("extdata/","filtered_feature_bc.csv",
-    package = "stmut"), header = TRUE)
-data2 <- read.csv(system.file("extdata/","Graph-Based.csv", package = "stmut"), header = TRUE)
-path <- system.file("extdata/","tissue_positions_list.csv", package = "stmut")
-df <- sptBClstRds(files=files,data1=data1, data2=data2, path=path)
+files <- list.files(
+  path = system.file("extdata/spotIndex", package = "stmut"),
+  pattern = ".txt", full.names = TRUE, recursive = FALSE
+)
+data1 <- read.csv(system.file("extdata/", "filtered_feature_bc.csv",
+  package = "stmut"
+), header = TRUE)
+data2 <- read.csv(system.file("extdata/", "Graph-Based.csv", package = "stmut"), header = TRUE)
+path <- system.file("extdata/", "tissue_positions_list.csv", package = "stmut")
+df <- sptBClstRds(files = files, data1 = data1, data2 = data2, path = path)
 }
 }

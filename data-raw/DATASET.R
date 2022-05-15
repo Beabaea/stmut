@@ -1,9 +1,9 @@
 ## code to prepare `DATASET` dataset goes here
 
 # read in external data for package testing
-files <- list.files(path = "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotIndex", pattern = ".txt",full.names = TRUE, recursive = FALSE)
+files <- list.files(path = "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotIndex", pattern = ".txt", full.names = TRUE, recursive = FALSE)
 data1 <- read.csv("/Volumes/Bastian/Limin/Ji_data/ST_paper/rFunctions/data/filtered_feature_bc.csv", header = TRUE)
-data2 <- read.csv("/Volumes/Bastian/Limin/Ji_data/ST_paper/rFunctions/data/Graph-Based.csv",header = TRUE)
+data2 <- read.csv("/Volumes/Bastian/Limin/Ji_data/ST_paper/rFunctions/data/Graph-Based.csv", header = TRUE)
 path <- "/Volumes/Bastian/Limin/Ji_data/ST_paper/rFunctions/data/tissue_positions_list.csv"
 
 # add test data to the development package
@@ -19,7 +19,7 @@ usethis::use_data(path, overwrite = TRUE)
 # write.csv(df[[2]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBClster.csv", row.names = FALSE)
 
 index <- read.csv("/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotBC.csv", header = TRUE)
-files2 <- list.files(path = "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/mpileup",pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
+files2 <- list.files(path = "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/mpileup", pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
 usethis::use_data(index, compress = "xz", overwrite = TRUE)
 usethis::use_data(files2, compress = "xz", overwrite = TRUE)
 # write.csv(df1[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/spotRdCtFinal.csv", row.names = FALSE)
@@ -35,4 +35,8 @@ usethis::use_data(d2, compress = "xz", overwrite = TRUE)
 # write.csv(df3[[1]], "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/MutantSpotIndex.csv", row.names = FALSE)
 
 
-
+# test data for spotSummary function
+df <- read.csv("/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/NonZeroRdSpotIndex.csv", header = TRUE)
+path1 <- "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/mpileup/"
+usethis::use_data(df, compress = "xz", overwrite = TRUE)
+usethis::use_data(path1, compress = "xz", overwrite = TRUE)

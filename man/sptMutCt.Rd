@@ -19,9 +19,11 @@ Count Ref and Mutant Reads for Each Spot
 }
 \examples{
 \dontrun{
-index <- read.csv(system.file("extdata/","spotBC.csv", package = "stmut"), header = TRUE)
-files2 <- list.files(path = system.file("extdata/mpileup", package = "stmut"),
-    pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE)
-df1 <- sptMutCt(index=index, files=files2)
+index <- read.csv(system.file("extdata/", "spotBC.csv", package = "stmut"), header = TRUE)
+files2 <- list.files(
+  path = system.file("extdata/mpileup", package = "stmut"),
+  pattern = "MpileupOutput_RNA.txt", full.names = TRUE, recursive = TRUE, include.dirs = TRUE
+)
+df1 <- sptMutCt(index = index, files = files2)
 }
 }
