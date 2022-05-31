@@ -189,3 +189,100 @@ it is 0. <br /> column 14: A score calculated based on the ref and
 mutant read counts. The higher the score is, the more likely it is a
 tumor spot. The table is ordered by this column. <br /> column 15:
 Details on which genes containing what mutations in which spots. <br />
+
+############################################## 
+
+The following three functions are used for spots CNVs visualization. An
+example to run wtArmMedianOne function
+
+``` r
+library(stmut)
+df <- read.csv("./inst/extdata/spot1_rep1.cnr", header = TRUE)
+path1 <- read.csv("./inst/extdata/hg38_centromereSimple.bed", sep = "\t", header = FALSE) 
+
+df5 <- wtArmMedianOne(data = cnr, centmere = centm)
+
+head(df5[[1]])
+#>   chromosome   start     end     gene       log2     depth     gc tx_length
+#> 1          1 1001138 1014541    ISG15 -0.2183919 2.2842600 0.5643       788
+#> 2          1 1216908 1232031     SDF4 -0.2183919 0.0000000 0.6135       604
+#> 3          1 1373730 1375495 AURKAIP1 -0.2183919 0.1142860 0.6687       875
+#> 4          1 1385711 1399328    CCNL2 -0.2183919 0.0538503 0.5137      1857
+#> 5          1 1401908 1407313   MRPL20 -0.2183919 0.0000000 0.5309       314
+#> 6          1 1541673 1574869    SSU72 -0.2183919 0.0239464 0.5387      4176
+#>     weight
+#> 1 0.600865
+#> 2 0.814714
+#> 3 0.792194
+#> 4 0.728547
+#> 5 0.798626
+#> 6 0.799400
+head(df5[[2]])
+#>   chromosome p_Genes q_Genes  pArmEnds CM_row_pos
+#> 1          1     100      83 145917714        100
+#> 2          2      43      52  96184859         43
+#> 3          3      32      46 100492619         32
+#> 4          4      11      22  55395957         11
+#> 5          5       8      47  73498408          8
+#> 6          6      47      24  73515750         47
+```
+
+An example to run CtArmGenes function
+
+``` r
+library(stmut)
+cdt <- read.table("./inst/extdata/cdt.cdt", header = TRUE)
+d3 <- read.table("./inst/extdata/summary.txt", sep = "\t", header = TRUE) 
+
+df6 <- CtArmGenes(cdt = cdt, data = d3)
+
+head(df6)
+#>   arms genes chromosome gene_row
+#> 1   1p   100          1        1
+#> 2   1q    83          1      101
+#> 3   2p    43          2      184
+#> 4   2q    52          2      227
+#> 5   3p    32          3      279
+#> 6   3q    46          3      311
+```
+
+An example to run cdt_filt_sort function
+
+``` r
+library(stmut)
+library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
+cdt <- read.table("./inst/extdata/cdt.cdt", header = TRUE)
+data4 <- read.csv("./inst/extdata/CtArmGenSummary.csv",  header = TRUE)
+arm <- c("1p","3p","3q","4q","5q","8q","9q","10p","10q","11q","13p","13q", "20p","20q","21q","14q","17q")
+d4 <- data4 %>% filter(arms %in% arm)
+genes <- d4[,"genes"]
+rs <- d4[,"gene_row"]
+gainLoss <- c(1,-1,1,-1,-1,1,1,-1,-1,1,-1,-1,1,1,-1,1,1)
+
+df7 <- cdt_filt_sort(cdt = cdt,genes = genes,gainLoss = gainLoss,rs=rs)
+#> Warning in xtfrm.data.frame(x): cannot xtfrm data frames
+
+head(df7)
+#>      CLID                       NAME spot424_rep1_cluster1
+#> 1 IMAGE:0    1:1001138-1014541:ISG15             0.7610323
+#> 2 IMAGE:1     1:1216908-1232031:SDF4             0.7610323
+#> 3 IMAGE:2 1:1373730-1375495:AURKAIP1             0.7610323
+#> 4 IMAGE:3    1:1385711-1399328:CCNL2             0.7610323
+#> 5 IMAGE:4   1:1401908-1407313:MRPL20             0.7610323
+#> 6 IMAGE:5    1:1541673-1574869:SSU72             0.7610323
+#>   spot325_rep1_cluster1 spot19_rep1_cluster1
+#> 1           -0.01796844          -0.05211491
+#> 2           -0.01796844          -0.05211491
+#> 3           -0.01796844          -0.05211491
+#> 4           -0.01796844          -0.05211491
+#> 5           -0.01796844          -0.05211491
+#> 6           -0.01796844          -0.05211491
+```

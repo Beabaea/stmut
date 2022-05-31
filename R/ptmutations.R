@@ -167,8 +167,8 @@ sptMutCt <- function(index, files) {
 #' @export
 #'
 #' @examples \dontrun{
-#' d1 <- read.csv(system.file("extdata/", "spotBClster.csv", package = stmut), header = TRUE)
-#' d1 <- read.csv(system.file("extdata/", "spotRdCtFinal.csv", package = stmut), header = TRUE)
+#' d1 <- read.csv(system.file("extdata/", "spotBClster.csv", package = "stmut"), header = TRUE)
+#' d1 <- read.csv(system.file("extdata/", "spotRdCtFinal.csv", package = "stmut"), header = TRUE)
 #' df3 <- nonZeRdCts(df1 = d1, df2 = d2)
 #' }
 nonZeRdCts <- function(df1, df2) {
@@ -191,7 +191,7 @@ nonZeRdCts <- function(df1, df2) {
 #' @export
 #'
 #' @examples \dontrun{
-#' df <- read.csv(system.file("extdata/", "NonZeroRdSpotIndex.csv", package = stmut), header = TRUE)
+#' df <- read.csv(system.file("extdata/", "NonZeroRdSpotIndex.csv", package = "stmut"), header = TRUE)
 #' path1 <- list.files(path = system.file("extdata/mpileup", package = "stmut"))
 #' df4 <- spotSummary(df = df, path1 = path1)
 #' }
@@ -238,3 +238,214 @@ spotSummary <- function(df, path1) {
   data <- data %>% filter(MreadC > 0)
   return(data)
 }
+
+
+
+
+
+#' Calculate Chromosome Arm CNVs Weighted Median to Represent the CNVs of that arm.
+#'
+#' @param data The cnr dataframe of each spot.
+#' @param centmere The centromere dataframe of hg38.
+#'
+#' @importFrom matrixStats weightedMedian
+#'
+#' @return A list of 2 dataframe, the weighted cnr file and a summary file counting
+#' how many genes in each arm.
+#' @export
+#'
+#' @examples \dontrun{
+#' cnr <- read.table(system.file("extdata/", "spot1_rep1.cnr", package = "stmut"), header = TRUE)
+#' centm <- read.csv(system.file("extdata/", "hg38_centromereSimple.bed", package = "stmut"),
+#' sep = "\t", header = FALSE)
+#' df5 <- wtArmMedianOne(data = cnr, centmere = centm)
+#' }
+wtArmMedianOne <- function(data,centmere){
+  chromosome <- NULL
+  # when calculate rolling median, rolling through each arm within of each chromosome.
+  mt <- data %>% filter(chromosome %in% "MT")
+  dataNew <- data %>% filter(!chromosome %in% "MT") # remove MT
+  dataNew[which(dataNew$chromosome == "X"),1] <- "23" # replace X with "23"
+
+  chr <- unique(dataNew[, which(colnames(data)=="chromosome")])
+  colnames(centmere) <- c("chromosome", "start", "end")
+  centmere$chromosome <- substr(centmere$chromosome,4,nchar(centmere$chromosome))
+  centmere[which(centmere$chromosome=="X"),1] <- "23"
+  centmere[which(centmere$chromosome=="Y"),1] <- "24"
+  centmere$chromosome <- as.numeric(centmere$chromosome)
+  centmere <- centmere[order(centmere$chromosome),] # adjust centmere data to be in chromosome order
+  centmere$chromosome <- as.character(centmere$chromosome)
+
+  qArm <- c() # store only qArms
+
+  df <- data.frame(characters=character(),
+                   Integers=integer(),
+                   Integers=integer(),
+                   Characters=character(),
+                   Doubles=double(),
+                   Doubles=double(),
+                   Doubles=double(),
+                   Integers=integer(),
+                   Doubles=double(),
+                   stringsAsFactors=FALSE)
+  dfArms <- data.frame(matrix(nrow = length(chr), ncol = 5)) # store number genes of each arm for cdt sorting use
+  colnames(dfArms) <- c("chromosome","p_Genes","q_Genes","pArmEnds","CM_row_pos")
+
+  for (ch in chr){ # first loop over chromosome
+    data1 <- dataNew %>% filter(chromosome %in% ch) # chr1
+    ctm1 <- centmere %>% filter(chromosome %in% ch) # centromere of chr1
+    nch <- length(data1[,which(colnames(data1)=="log2")])
+    #to classify chromosomes into 2 groups, with and withour p-arms
+    for (pos in data1$start){ # second loop over start pos of each chromosome to get break-points for centromere
+      if (pos > ctm1$start){
+        val <- which(data1$start == pos) # row pos of p arm ends,q arm starts
+        if (val == 1){
+          qArm <- append(qArm, ch)
+        }
+        dfArms[ch,"chromosome"] <- ch
+        dfArms[ch,"p_Genes"] <- val-1
+        dfArms[ch,"q_Genes"] <- nrow(data1)-val+1
+        dfArms[ch,"pArmEnds"] <- pos
+        dfArms[ch,"CM_row_pos"] <- val-1
+        break
+      }
+    } # end of second for loop
+
+    if (ch %in% qArm){ # weighted-median for chromosomes without p-arms
+      dat <- data1[c(1:nch), which(colnames(data1)=="log2")]
+      w <- data1[c(1:nch), which(colnames(data1)=="weight")]
+      m <- weightedMedian(dat,w)
+      data1[which(data1$chromosome == ch),which(colnames(data1)=="log2")] <- m
+      df <- rbind(df, data1)
+
+    } else { # chromosome with both arms
+      dat1 <- data1[c(1:(val-1)), which(colnames(data1)=="log2")]
+      w1 <- data1[c(1:(val-1)), which(colnames(data1)=="weight")]
+      m1 <- weightedMedian(dat1,w1)
+      data1[c(1:(val-1)),which(colnames(data1)=="log2")] <- m1
+      dat2 <- data1[c(val:nch), which(colnames(data1)=="log2")]
+      w2 <- data1[c(val:nch), which(colnames(data1)=="weight")]
+      m2 <- weightedMedian(dat2,w2)
+      data1[c(val:nch),which(colnames(data1)=="log2")] <- m2
+      df <- rbind(df, data1)
+    }}
+
+  returnList <- list(df,dfArms)
+  return(returnList)
+} # function ending
+
+
+
+
+#' Reformat Gene Summary of Each Arm for cdt_filt_sort function use in the next step.
+#'
+#' @param cdt the filtered cdt file.
+#' @param data A summary file generated by wtArmMedianOne function.
+#'
+#' @return A dataframe prepared for sorting the cdt based on bulk CNVs information.
+#' @export
+#'
+#' @examples \dontrun{
+#' cdt <- read.table(system.file("extdata/", "cdt.cdt", package = "stmut"), header = TRUE)
+#' data3 <- read.table(system.file("extdata/", "summary.txt", package = "stmut"),
+#' sep = "\t", header = TRUE)
+#' df6 <- CtArmGenes(cdt = cdt, data = data3)
+#' }
+CtArmGenes <- function(cdt, data){
+  dfgene <- data.frame(matrix(nrow = 0,ncol = 3)) # store chromosome,number of genes in each arm, arm_start_pos...
+  colnames(dfgene) <- c("chromosome","arm_genes","gene_row")
+
+  genes <- cdt[,3]
+  spt <- names(cdt)[3]
+  col1 <- cdt[,spt]
+
+  i = 1
+  for (arm in unique(genes)){ # because each arm has the same median, that is why unique(genes)= number of arms
+    #print(arm)
+    d0 <- cdt %>% filter(!!as.symbol(spt) == arm)
+    ch <- str_split(d0[1,2],":",simplify = TRUE)[1]
+    numGene <- dim(d0)[1]
+    rowN <- which(col1 == arm)[1]
+    dfgene[i,"chromosome"] <- ch
+    dfgene[i,"arm_genes"] <- numGene
+    dfgene[i,"gene_row"] <- rowN
+    i = i +1
+  }
+
+  # extract p-arm, q-arm information
+  d3 <- data.frame(matrix(nrow = dim(data)[1]*2, ncol = 2))
+  colnames(d3) <- c("arms","genes")
+  for (i in 1:dim(data)[1]){
+    d3[2*i-1,1] = paste0(i,"p")
+    d3[2*i-1,2] <- data[i,2]
+    d3[2*i,1] <- paste0(i,"q")
+    d3[2*i,2] <- data[i,3]
+  }
+
+  d4 <- d3 %>% filter(genes!=0)
+  final <- cbind(d4, dfgene)
+  final <- final[,-4]
+  return(final)
+}
+
+
+
+
+#' Rank the spots by their similarity to the DNA-seq copy number alterations.
+#'
+#' @param cdt cdt file to be ranked
+#' @param genes Number of genes in each arm
+#' @param gainLoss Gain or Loss info of each arm, 1 represent gain, -1 represent loss.
+#' @param rs Representative row position of each arm.
+#'
+#' @return A spots dataframe sorted by CNVs
+#' @export
+#'
+#' @examples \dontrun{
+#' cdt <- read.table(system.file("extdata/", "cdt.cdt", package = "stmut"), header = TRUE)
+#' data4 <- read.csv(system.file("extdata/", "CtArmGenSummary.csv", package = "stmut"), header = TRUE)
+#' arm <- c("1p","3p","3q","4q","5q","8q","9q","10p","10q","11q","13p","13q",
+#' "20p","20q","21q","14q","17q")
+#' d4 <- data4 %>% filter(arms %in% arm)
+#' genes <- d4[,"genes"]
+#' rs <- d4[,"gene_row"]
+#' gainLoss <- c(1,-1,1,-1,-1,1,1,-1,-1,1,-1,-1,1,1,-1,1,1)
+#' df7 <- cdt_filt_sort(cdt = cdt,genes = genes,gainLoss = gainLoss,rs=rs)
+#' }
+cdt_filt_sort <- function(cdt,genes,gainLoss,rs){
+  name <- cdt[,c(1,2)]
+  cdt <- cdt[,-c(1,2)]
+
+  # convert cdt values to be numeric
+  cdt[] <- lapply(cdt, as.numeric) # convert the dataframe to numeric
+
+  wt <- c() # normalize number of genes by divide the max number of genes
+  for (n in genes){
+    weit <- n/max(genes)
+    wt <- append(wt, weit)
+  }
+  newR <- c() # newR created for sorting the dataframe
+  nc <- dim(cdt)[2]
+  for (i in c(1:nc)){
+    val = 0
+    for (k in 1:length(genes)){
+      val1 <- gainLoss[k]*(cdt[rs[k],i])*wt[k]  #val <- (-1)*(cdt[rs[1],i])*wt[1]+cdt[rs[2],i]*wt[2]+(-1)*(cdt[rs[3],i])*wt[3] # the sum of weighted values, 3q and 8q has CN gains, 3p and 8p has CN loss, so val = 3q*wt - 3p*wt +8q*wt-8p*wt
+      val = val + val1
+    }
+    newR <- append(newR, val)
+  }
+
+  cdt1 <- rbind(cdt,newR)
+  cdt1 <- cdt1[,order(cdt1[nrow(cdt1),],decreasing = FALSE)] # reorder by the added row, order() has warning, but works.
+  cdt2 <- cdt1[-nrow(cdt1),] # remove the added row
+  cdt3 <- cbind(name,cdt2)
+  return(cdt3)
+}
+
+
+
+
+
+
+
+

@@ -19,8 +19,8 @@ Generate Non-zero Reads Spot Comprehensive Table
 }
 \examples{
 \dontrun{
-d1 <- read.csv(system.file("extdata/", "spotBClster.csv", package = stmut), header = TRUE)
-d1 <- read.csv(system.file("extdata/", "spotRdCtFinal.csv", package = stmut), header = TRUE)
+d1 <- read.csv(system.file("extdata/", "spotBClster.csv", package = "stmut"), header = TRUE)
+d1 <- read.csv(system.file("extdata/", "spotRdCtFinal.csv", package = "stmut"), header = TRUE)
 df3 <- nonZeRdCts(df1 = d1, df2 = d2)
 }
 }

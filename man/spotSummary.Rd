@@ -19,7 +19,7 @@ Rank Spots with Mutant Reads using A Customized Strategy
 }
 \examples{
 \dontrun{
-df <- read.csv(system.file("extdata/", "NonZeroRdSpotIndex.csv", package = stmut), header = TRUE)
+df <- read.csv(system.file("extdata/", "NonZeroRdSpotIndex.csv", package = "stmut"), header = TRUE)
 path1 <- list.files(path = system.file("extdata/mpileup", package = "stmut"))
 df4 <- spotSummary(df = df, path1 = path1)
 }

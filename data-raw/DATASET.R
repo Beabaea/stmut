@@ -40,3 +40,24 @@ df <- read.csv("/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/NonZero
 path1 <- "/Users/limin/limin_practice/Rprojects/stmut/inst/extdata/mpileup/"
 usethis::use_data(df, compress = "xz", overwrite = TRUE)
 usethis::use_data(path1, compress = "xz", overwrite = TRUE)
+
+
+# test data for wtArmMedianOne function
+cnr <- read.table("/Volumes/Bastian/Limin/Ji_data/ST_paper/mergedP6/cnr/spot1_rep1.cnr", header = TRUE)
+centm <- read.table("/Volumes/Bastian/Limin/reference/hg38_centromereSimple.bed")
+usethis::use_data(cnr, overwrite = TRUE)
+usethis::use_data(centm, overwrite = TRUE)
+
+# test data for CtArmGenes function
+cdt <- read.table("/Volumes/Bastian/Limin/Ji_data/ST_paper/mergedP6/cdt/p6GrpWtClstRdsMissRmdCtdNonTumMedian.cdt", sep = "\t", header = TRUE)
+cdt <- cdt[-c(1,2),-c(1,4)] #
+cdt <- cdt[,1:5]
+data3 <- read.table("/Volumes/Bastian/Limin/Ji_data/ST_paper/mergedP6/armWtedOne/summary.txt", sep = "\t", header = TRUE)
+usethis::use_data(cdt, compress = "xz", overwrite = TRUE)
+usethis::use_data(data3, compress = "xz", overwrite = TRUE)
+
+
+# test data for cdt_filt_sort function
+data4 <- read.csv("/Volumes/Bastian/Limin/Ji_data/ST_paper/mergedP6/cdt/CtArmGenSummary.csv", header = TRUE)
+usethis::use_data(data4, compress = "xz", overwrite = TRUE)
+

@@ -142,3 +142,83 @@
 #'   \item{path}{a character}
 #' }
 "path1"
+
+
+
+#' Sample Data for wtArmMedianOne Function
+#'
+#' @description First input for wtArmMedianOne
+#'
+#' @format A data frame with 1516 rows and 9 variables
+#' \describe{
+#'   \item{chromosome}{the chromosome information}
+#'   \item{start}{the start position}
+#'   \item{end}{the end position}
+#'   \item{gene}{the gene name}
+#'   \item{log2}{log2 value}
+#'   \item{depth}{depth}
+#'   \item{gc}{gc content}
+#'   \item{tx_length}{tx_length}
+#'   \item{weight}{weight}
+#' }
+"cnr"
+
+#' Sample Data for wtArmMedianOne Function
+#'
+#' @description Second input for wtArmMedianOne
+#'
+#' @format A data frame with 24 rows and 3 variables
+#' \describe{
+#'   \item{V1}{Cchromosome column}
+#'   \item{V2}{the start position}
+#'   \item{V3}{the end position}
+#' }
+"centm"
+
+
+
+#' Sample Data for CtArmGenes and cdt_filt_sort Function
+#'
+#' @description First input for CtArmGenes and cdt_filt_sort
+#'
+#' @format A data frame with 1506 rows and 5 variables
+#' \describe{
+#'   \item{CLID}{CLID}
+#'   \item{NAME}{Gene chr:start-end:name}
+#'   \item{spot19_rep1_cluster1}{first spot}
+#'   \item{spot424_rep1_cluster1}{second spot}
+#'   \item{spot325_rep1_cluster1}{third spot}
+#' }
+"cdt"
+
+
+#' Sample Data for CtArmGenes Function
+#'
+#' @description First input for CtArmGenes
+#'
+#' @format A data frame with 23 rows and 5 variables
+#' \describe{
+#'   \item{chromosome}{the chromosome information}
+#'   \item{p_Genes}{number of genes in p arm}
+#'   \item{q_Genes}{number of genes in q arm}
+#'   \item{pArmEnds}{position pArm ends}
+#'   \item{CM_row_pos}{which row the centromere is from}
+#' }
+"data3"
+
+
+
+#' Sample Data for cdt_filt_sort Function
+#'
+#' @description First input for cdt_filt_sort
+#'
+#' @format A data frame with 23 rows and 5 variables
+#' \describe{
+#'   \item{arms}{arm name}
+#'   \item{genes}{number of genes in each arm}
+#'   \item{chromosome}{chromosome}
+#'   \item{gene_row}{representative gene row}
+#' }
+"data4"
+
+
