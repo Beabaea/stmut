@@ -1,14 +1,33 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# stmut
+# stmut: Somatic Mutation Investigation of Spatial Transcriptomics Data
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of stmut is providing a series of functions to visualize which
-genes have somatic mutations in which spots when working on sptial
-transcriptomics data.
+Spatial transcriptomics technology allows scientists to map biological
+data to their corresponding spatial information to fully understand the
+biological process and disease development. Bioinformatic tools
+exploring and interpreting spatial transcriptomics data are in great
+need. Especially aproaches to visualize point mutations and allelic
+imbalance in spatial transcriptomics data. CNVkit is a popular and
+broadly-used tool kits to investigate the copy number alteration in both
+DNA-seq and RNA-seq data. Based on
+[CNVkit-RNA](https://cnvkit.readthedocs.io/en/stable/rna.html) and
+samtools, we provide a R package called stmut via this github page. The
+stmut package includes a series of functions to visualize copy number
+variations (CNVs), point mutation, and allelic imbalance in spatial
+transcriptomic data. We also provide [the scripts producing the
+figures](placeholder%20for%20scripts) in the manuscript.<br />
+
+The functions in stmut package are organized into 3 parts: CNVs, point
+mutation, allelic imbalance.
+
+This code was tested using R version 4.1.1, a macOS Monterey, Apple M1,
+16G Memory. Given that spatial transcriptomics data normally have more
+than hundreds or thousands spots, we recommend use a high performance
+cluster to obtain point mutation and allelic imbalance for each spot.
 
 ## Installation
 
@@ -18,6 +37,7 @@ You can install the development version of stmut from
 ``` r
 # install.packages("devtools")
 devtools::install_github("limin321/stmut")
+library(stmut)
 ```
 
 ## Notes before running the package.
@@ -251,6 +271,7 @@ An example to run cdt_filt_sort function
 ``` r
 library(stmut)
 library(dplyr)
+#> Warning: package 'dplyr' was built under R version 4.1.2
 #> 
 #> Attaching package: 'dplyr'
 #> The following objects are masked from 'package:stats':

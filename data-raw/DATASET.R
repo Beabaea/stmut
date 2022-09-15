@@ -61,3 +61,29 @@ usethis::use_data(data3, compress = "xz", overwrite = TRUE)
 data4 <- read.csv("/Volumes/Bastian/Limin/Ji_data/ST_paper/mergedP6/cdt/CtArmGenSummary.csv", header = TRUE)
 usethis::use_data(data4, compress = "xz", overwrite = TRUE)
 
+# test data for accStartCNR_CNS function
+data5 <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/CNV/P6_T.deduplicated.realign.cnr", sep = "\t", header = TRUE)
+data5 <- data5[,c("chromosome","start","end","log2","weight")]
+data6 <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/CNV/P6_T.deduplicated.realign.cns", sep = "\t", header = TRUE)
+data6 <- data6[,c("chromosome","start","end","log2","weight")]
+usethis::use_data(data5, compress="xz", overwrite = TRUE)
+usethis::use_data(data6, compress="xz", overwrite = TRUE)
+
+
+# test data for accumStartPos function
+data7 <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/LOH/MpileupOutput_TumorConverted.txt", header = TRUE)
+data7 <- data7[,c(1,2,3,10)]
+colnames(data7) <- c("chromosome", "start", "end","tumorshift")
+data7$chromosome <- substr(data7$chromosome,4,nchar(data7$chromosome))
+usethis::use_data(data7, compress = "xz", overwrite = TRUE)
+
+# test data for groupSpots and newSptBC functions
+data8 <- read.csv("/Volumes/Bastian/Limin/Ji_data/Patient6/SpatialTranscriptomic/Rep1/CopyNumber/GroupedSpots/cluster/c1.csv", header = TRUE)
+usethis::use_data(data8, compress = "xz", overwrite = TRUE)
+
+
+
+
+
+
+

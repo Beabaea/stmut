@@ -221,4 +221,62 @@
 #' }
 "data4"
 
+#' Sample Data for accStartCNR_CNS Function
+#'
+#' @description First input for accStartCNR_CNS
+#'
+#' @format A data frame with 389448 rows and 7 variables
+#' \describe{
+#'   \item{chromosome}{chromosome name}
+#'   \item{start}{start position of DNA region}
+#'   \item{end}{end position of DNA region}
+#'   \item{log2}{log2 ratio}
+#'   \item{weight}{gene weight}
+#' }
+"data5"
+
+#' Sample Data for accStartCNR_CNS Function
+#'
+#' @description Second input for accStartCNR_CNS
+#'
+#' @format A data frame with 122 rows and 8 variables
+#' \describe{
+#'   \item{chromosome}{chromosome name}
+#'   \item{start}{start position of DNA region}
+#'   \item{end}{end position of DNA region}
+#'   \item{log2}{log2 ratio}
+#'   \item{weight}{gene weight}
+#' }
+"data6"
+
+#' Sample Data for accumStartPos Function
+#'
+#' @description First input for accumStartPos
+#'
+#' @format A data frame with 13401 rows and 4 variables
+#' \describe{
+#'   \item{chromosome}{chromosome name}
+#'   \item{start}{start position of DNA region}
+#'   \item{end}{end position of DNA region}
+#'   \item{tumorshift}{tumorshift deviation from 0.5 VAF}
+#' }
+"data7"
+
+#' Sample Data for groupSpots and newSptBC Function
+#'
+#' @description First input for groupSpots
+#'
+#' @format A data frame with 389 rows and 5 variables
+#' \describe{
+#'   \item{barcode}{spot barcode}
+#'   \item{cX}{X-axis position}
+#'   \item{cY}{Y-axis position}
+#'   \item{clusters}{the cluster the spot belongs to}
+#'   \item{reads}{the number of reads in the spot}
+#' }
+"data8"
+
+
+
+
 

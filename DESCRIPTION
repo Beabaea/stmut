@@ -7,10 +7,13 @@ Description: Create a table to visualize point mutation of sptail transcriptomic
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Imports: 
     dplyr,
+    ggplot2,
     matrixStats,
+    raster,
+    stats,
     stringr,
     utils
 Suggests: 
@@ -19,5 +22,6 @@ Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
 LazyData: true
+LazyDataCompression: xz
 URL: https://github.com/limin321/stmut
 BugReports: https://github.com/limin321/stmut/issues
