@@ -1,0 +1,82 @@
+---
+title: "TableS1"
+author: "LiminChen"
+date: "9/19/2022"
+output: html_document
+---
+
+load packages
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(stringr)
+library(data.table) # for string partially match 
+library(tibble)
+library(readxl)
+library(stmut)
+```
+
+
+## Table S1
+Supplementary tableS1 -- patient4 and patient6 bulk somatic mutations list
+```{r}
+p4 <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient4/BulkDNASeq/mutations/somaticMML.txt", sep = "\t", header = TRUE, quote = "")
+p6 <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/mutations/somaticMML.txt", sep = "\t", header = TRUE, quote = "")
+p4 <- p4[-1,]
+p6 <- p6[-1,]
+df <- rbind(p4,p6)
+Patient <- c(rep("Patient 4", dim(p4)[1]), rep("Patient 6", dim(p6)[1]))
+
+df1 <- cbind(Patient, df)
+df1$Start_Position <- as.character(df1$Start_Position)
+df1$End_Position <- as.character(df1$End_Position)
+df1$dbSNP_RS <- as.character(df1$dbSNP_RS)
+
+# tumor allele frequency
+d4 <- read.csv("/Volumes/Bastian/Limin/Ji_data/Patient4/BulkDNASeq/mutations/AJ-03_Pass_Filter_MasterMutationList.csv", header = TRUE, sep = ",", comment.char = "#")
+d4 <- d4 %>% filter(Hugo_Symbol %in% p4$Hugo_Symbol)
+d4 <- d4[-1,]
+d6 <- read.csv("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/mutations/AJ-05_Pass_Filter_MasterMutationList.csv", header = TRUE, sep = ",", comment.char = "#")
+d6 <- d6 %>% filter(d6$Hugo_Symbol %in% p6$Hugo_Symbol)
+
+UV <- c(d4$UV, d6$UV)
+Tumor_Ref <- c(d4$Tumor_Ref, d6$Tumor_Ref)
+Tumor_Mut <- c(d4$Tumor_Mut, d6$Tumor_Mut)
+Tumor_MAF <- c(d4$Tumor_MAF, d6$Tumor_MAF)
+
+patho <- read_excel("/Volumes/Bastian/Limin/Ji_data/ST_paper/tabels/TableS1_pathogenicMarked.xlsx")
+patho <- patho[-1,]
+Pathogenic_Mutations <-patho$Pathogenic_Mutations
+df0 <- data.frame(UV,Pathogenic_Mutations, Tumor_Ref, Tumor_Mut, Tumor_MAF)
+df1 <- cbind(df1,df0)
+
+# add ref and mutant column of Spatial Transcriptomics data to bulk data df1.
+p41 <- read.delim("/Volumes/Bastian/Limin/Ji_data/Patient4/SpatialTranscriptomic/Rep1/PointMutation/AllSpots/mpileupOutput/MpileupOutput_RNA_allSpots.txt",sep = "\t", header = FALSE)
+p41[1,9] <- "Ref1"
+p41[1,10] <- "Mut1"
+colnames(p41) <- p41[1,]
+p41 <- p41[-1,]
+p61 <- read.delim("/Volumes/Bastian/Limin/Ji_data/Patient6/SpatialTranscriptomic/Rep1/PointMutation/AllSpots/mpileup/MpileupOutput_RNA.txt", sep = "\t", header = FALSE)
+p61[1,9] <- "Ref1"
+p61[1,10] <- "Mut1"
+colnames(p61) <- p61[1,]
+p61 <- p61[-1,]
+rep1 <- rbind(p41,p61)
+rep1 <- rep1[,c(1,9,10)]
+p42 <- read.delim("/Volumes/Bastian/Limin/Ji_data/Patient4/SpatialTranscriptomic/Rep2/PointMutation/AllSpots/mpileup/MpileupOutput_RNA.txt", sep = "\t", header = FALSE)
+p42[1,9] <- "Ref2"
+p42[1,10] <- "Mut2"
+colnames(p42) <- p42[1,]
+p42 <- p42[-1,]
+p62 <- read.delim("/Volumes/Bastian/Limin/Ji_data/Patient6/SpatialTranscriptomic/Rep2/PointMutation/AllSpots/mpileup/MpileupOutput_RNA.txt", sep = "\t", header = FALSE)
+p62[1,9] <- "Ref2"
+p62[1,10] <- "Mut2"
+colnames(p62) <- p62[1,]
+p62 <- p62[-1,]
+rep2 <- rbind(p42,p62)
+rep2 <- rep2[,c(1,9,10)]
+df3 <- cbind(df1,rep1)
+df4 <- cbind(df3,rep2)
+df5 <- df4[,-c(20, 23)]
+```

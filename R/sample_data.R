@@ -276,7 +276,38 @@
 #' }
 "data8"
 
+#' Sample Data for proposTumLoup Function
+#'
+#' @description First input for proposTumLoup
+#'
+#' @format A data frame with 67 rows and 15 variables
+#' \describe{
+#'   \item{barcode}{spot barcode}
+#'   \item{TotalRDs}{TotalRDs}
+#'   \item{spot}{spot}
+#'   \item{RreadC}{RreadC}
+#'   \item{MreadC}{MreadC}
+#'   \item{Treads}{Treads}
+#'   \item{groups}{groups}
+#'   \item{propM2Total}{propM2Total}
+#'   \item{propM2SumRM}{propM2SumRM}
+#'   \item{MoreThan1Mrd}{MoreThan1Mrd}
+#'   \item{Score}{Score}
+#'   \item{GenesWithMutRead}{GenesWithMutRead}
+#'   \item{array_row}{array_row}
+#'   \item{array_col}{array_col}
+#'   \item{cluster}{cluster}
+#' }
+"data9"
 
-
-
-
+#' Sample Data for proposTumLoup Function
+#'
+#' @description Second input for proposTumLoup
+#'
+#' @format A data frame with 744 rows and 3 variables
+#' \describe{
+#'   \item{barcode}{spot barcode}
+#'   \item{spot}{spot}
+#'   \item{TotalRDs}{TotalRDs}
+#' }
+"data10"

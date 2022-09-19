@@ -81,8 +81,11 @@ usethis::use_data(data7, compress = "xz", overwrite = TRUE)
 data8 <- read.csv("/Volumes/Bastian/Limin/Ji_data/Patient6/SpatialTranscriptomic/Rep1/CopyNumber/GroupedSpots/cluster/c1.csv", header = TRUE)
 usethis::use_data(data8, compress = "xz", overwrite = TRUE)
 
-
-
+# test data for proposTumLoup function
+data9 <- read.csv("/Volumes/Bastian/Limin/Ji_data/Patient4/SpatialTranscriptomic/Rep1/PointMutation/AllSpots/mpileupOutput/MutantSpotIndex_Scored.csv")
+data10 <- read.csv("/Volumes/Bastian/Limin/Ji_data/Patient4/SpatialTranscriptomic/Rep1/PointMutation/AllSpots/mpileupOutput/spotBC.csv")
+usethis::use_data(data9, compress = "xz", overwrite = TRUE)
+usethis::use_data(data10, compress = "xz", overwrite = TRUE)
 
 
 
