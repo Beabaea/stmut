@@ -2,7 +2,7 @@
 title: "TableS1"
 author: "LiminChen"
 date: "9/19/2022"
-output: html_document
+output: md_document
 ---
 
 load packages

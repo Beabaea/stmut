@@ -19,7 +19,7 @@ samtools, we provide a R package called stmut via this github page. The
 stmut package includes a series of functions to visualize copy number
 variations (CNVs), point mutation, and allelic imbalance in spatial
 transcriptomic data. We also provide [the scripts producing the
-figures](https://github.com/limin321/stmut/blob/master/FigTableScripts/)
+figures](https://github.com/limin321/stmut/blob/master/FigTableScripts/FigTables.md)
 in the manuscript.<br />
 
 The functions in stmut package are organized into 3 parts: CNVs, point
