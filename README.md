@@ -7,9 +7,9 @@
 <!-- badges: end -->
 
 Spatial transcriptomics technology allows scientists to map biological
-data to their spatial information to fully understand the biological
+data **(biological data is vague, maybe you a different adjective other than biological)** to their spatial information to fully understand the biological
 process and disease development. Bioinformatic tools exploring and
-interpreting spatial transcriptomics data are in great need. Especially
+interpreting spatial transcriptomics data are in great need **(combine these sentences or start this next sentence with "This is especially important for approaches...)"** Especially
 approaches to visualize point mutations and allelic imbalance in spatial
 transcriptomics data. CNVkit is a popular and broadly-used tool kit to
 investigate the copy number alteration in both DNA-seq and RNA-seq data.
@@ -19,8 +19,8 @@ The stmut package includes a series of functions to visualize copy
 number variations (CNVs), point mutations, and allelic imbalance in
 spatial transcriptomics data. We also provide [the scripts producing the
 figures](https://github.com/limin321/stmut/blob/master/FigTableScripts/FigTables.md)
-in the manuscript, which also serves as a user guide for this package.
-In addition, this package is also be applicable to 10x single cell data
+in the manuscript, which ~~also~~ serve~~s~~ as a user guide for this package.
+In addition, this package is ~~also be~~ applicable to 10x single cell data
 analyses. <br />
 
 The functions in stmut package are organized into 3 parts: CNVs, point
