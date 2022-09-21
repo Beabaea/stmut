@@ -210,7 +210,7 @@ bulkCNVs <- function(centmere, dcnr, dcns){
     annotate("segment", x=0, xend=max(df$start)*1.02, y=0, yend=0,color="black")+
     annotate("segment", x=t1, xend=t1, y=-1.5, yend = 1, color = "black")+
     geom_vline(data = centmere, mapping = aes(xintercept=end), linetype=10, color="black") + # centromere line
-    scale_x_discrete(limits = pos, labels=chrom) +
+    scale_x_continuous(breaks = pos, labels=chrom, expand = c(0, 0)) +
     labs(x = "chromosome", y = "copy ratio (log2)") +
     ylim(c(-1.5, 1)) +
     theme_classic() + # use white color as background
@@ -326,7 +326,11 @@ bulkLOHplot <- function(centmere, alle_imbal){
   }
 
   # preparing for plot
-  chrom <- factor(c(paste0("chr",seq(22)),"chrX","chrY"),levels = c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","chrX","chrY"))
+  if (length(unique(df$chromosome)) == 24){
+    chrom <- factor(c(paste0("chr",seq(22)),"chrX","chrY"),levels = c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","chrX","chrY"))
+  }else{
+    chrom <- factor(c(paste0("chr",seq(22)),"chrX"),levels = c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","chrX"))
+  }
 
   pos <- df %>%
     group_by(chromosome) %>%
@@ -339,7 +343,7 @@ bulkLOHplot <- function(centmere, alle_imbal){
     annotate("segment", x=t1, xend=t1, y=0, yend = 0.25, color = "black") +
     annotate("segment", x=new_armD$start, xend = new_armD$end, y=new_armD$median, yend = new_armD$median, color="orange")+ # add tumorshift median for each arm
     geom_vline(data = new_CM, mapping = aes(xintercept=start), linetype=10, color="black") + # centromere line
-    scale_x_discrete(limits = pos, labels=chrom) +
+    scale_x_continuous(breaks = pos, labels=chrom, expand = c(0, 0)) +
     labs(x = "chromosome", y = "TumorShift") +
     ylim(c(0, 0.25)) + # if change ylim(), making sure also change the annotate() yend=?, otherwise, the chromosome boundaries will disappear
     theme_classic() + # use white color as background

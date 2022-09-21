@@ -7,20 +7,21 @@
 <!-- badges: end -->
 
 Spatial transcriptomics technology allows scientists to map biological
-data to their corresponding spatial information to fully understand the
-biological process and disease development. Bioinformatic tools
-exploring and interpreting spatial transcriptomics data are in great
-need. Especially aproaches to visualize point mutations and allelic
-imbalance in spatial transcriptomics data. CNVkit is a popular and
-broadly-used tool kits to investigate the copy number alteration in both
-DNA-seq and RNA-seq data. Based on
-[CNVkit-RNA](https://cnvkit.readthedocs.io/en/stable/rna.html) and
-samtools, we provide a R package called stmut via this github page. The
-stmut package includes a series of functions to visualize copy number
-variations (CNVs), point mutation, and allelic imbalance in spatial
-transcriptomic data. We also provide [the scripts producing the
+data to their spatial information to fully understand the biological
+process and disease development. Bioinformatic tools exploring and
+interpreting spatial transcriptomics data are in great need. Especially
+approaches to visualize point mutations and allelic imbalance in spatial
+transcriptomics data. CNVkit is a popular and broadly-used tool kit to
+investigate the copy number alteration in both DNA-seq and RNA-seq data.
+Based on [CNVkit-RNA](https://cnvkit.readthedocs.io/en/stable/rna.html)
+and samtools, we provide a R package called stmut via this github page.
+The stmut package includes a series of functions to visualize copy
+number variations (CNVs), point mutations, and allelic imbalance in
+spatial transcriptomics data. We also provide [the scripts producing the
 figures](https://github.com/limin321/stmut/blob/master/FigTableScripts/FigTables.md)
-in the manuscript.<br />
+in the manuscript, which also serves as a user guide for this package.
+In addition, this package is also be applicable to 10x single cell data
+analyses. <br />
 
 The functions in stmut package are organized into 3 parts: CNVs, point
 mutation, allelic imbalance.
@@ -41,30 +42,63 @@ devtools::install_github("limin321/stmut")
 library(stmut)
 ```
 
-## Notes before running the package.
+#### Notes
 
-This package has a series of 4 functions: sptBClstRds, sptMutCt,
-nonZeRdCts, spotSummary. <br /> You have to run each function
-sequentially to obtain the ideal output, or You have your input of each
-function strictly match the input format of our examples.
+Bash scripts are displayed in `echo` command for your reference when you
+run your own data.
 
-Preparations – 5 files from spaceranger output: <br />
-filtered_feature_bc.csv <br /> Graph-Based.csv <br />
-possorted_genome_bam.bam <br /> spatial/tissue_positions_list.csv <br />
-raw_feature_bc_matrix/barcodes.tsv.gz <br />
+## I. Point Mutation Detection
 
-spotIndex: one spatial barcode one .txt file, thie file name is the spot
-name you choose. <br />
+You can run the following 5 functions: sptBClstRds, sptMutCt,
+nonZeRdCts, spotSummary, proposTumLoup sequentially to eventually
+generate a point mutation csv file for 10X Loupe Browser visualization.
+The color scheme can be customized in 10X Loupe Browser. The figures
+generated should be similar to the Figure 1 in our manuscript. Make sure
+the input files format matches with the examples provided by the package
+so as to smoothly run the codes. <br />
 
-spotBam: <https://github.com/10XGenomics/subset-bam> <br />
-subset-bam_linux –bam possorted_genome_bam.bam –cell-barcodes
-spot000.txt –out-bam spot000.bam samtools index spot000.bam
+### Prepare the following 5 files from the spaceranger pipeline output: <br />
 
-Count each spot ref and mut reads using Mpileup_RNA.pl (samtools
-mpileup): <br /> perl Mpileup_RNA.pl somaticSNPsMML.txt
-spot000/MpileupOutput_RNA.txt
+1.  filtered_feature_bc.csv <br />
+2.  Graph-Based.csv, this file is exported from 10X Loupe Browser as
+    shown below. <br />
 
-## Example
+![](./FigTableScripts/Images/Export_Graph_Based.png)
+
+3.  possorted_genome_bam.bam <br />
+4.  spatial/tissue_positions_list.csv <br />
+5.  raw_feature_bc_matrix/barcodes.tsv.gz <br />
+
+spotIndex generation: we save each barcode to an individual txt file,
+and the file is given a name as, for example, spot000.txt for the first
+spot. <br />
+
+``` bash
+echo "zcat barcodes.tsv.gz | split -l1 -d -a 3 --additional-suffix=.txt - spot"
+#> zcat barcodes.tsv.gz | split -l1 -d -a 3 --additional-suffix=.txt - spot
+```
+
+spotBam generation: the spot bam is generated as suggested by
+<https://github.com/10XGenomics/subset-bam> <br />
+
+``` bash
+echo "subset-bam_linux --bam possorted_genome_bam.bam --cell-barcodes spot000.txt --out-bam spot000.bam"
+echo "samtools index spot000.bam"
+#> subset-bam_linux --bam possorted_genome_bam.bam --cell-barcodes spot000.txt --out-bam spot000.bam
+#> samtools index spot000.bam
+```
+
+Count point mutation for each spot: we count the number of ref and mut
+reads using Mpileup_RNA.pl script [found
+here](./VisualizingSomaticAlterations/Scripts/). Make sure `samtools` is
+installed before running: <br />
+
+``` bash
+echo "perl Mpileup_RNA.pl Patient4SomaticSNPs.txt spot000/MpileupOutput_RNA.txt"
+#> perl Mpileup_RNA.pl Patient4SomaticSNPs.txt spot000/MpileupOutput_RNA.txt
+```
+
+#### Examples of running individual functions
 
 This is a basic example of how to run sptBClstRds function:
 
@@ -194,27 +228,34 @@ head(df4)
 ```
 
 Column meaning of df4: <br /> column 1: Spatial barcode <br /> column 2:
-spot name <br /> column 3: cluster in Loupe.Loupe file <br /> column 4:
-Total reads each spot has <br /> column 5: row position in
-position_lists_bc.csv <br /> column 6: col position in
+Spot name <br /> column 3: Cluster in Loupe.Loupe file <br /> column 4:
+Total reads each spot has <br /> column 5: Row position in
+position_lists_bc.csv <br /> column 6: Column position in
 position_lists_bc.csv <br /> column 7: Reference read counts <br />
-column 8: Mutant read counts <br /> column 9: Sum of Ref read count and
-Mut read count (sum of col 7 and col 8) <br /> column 10: The number (
+column 8: Mutant read counts <br /> column 9: Sum of Ref read counts and
+Mut read counts (sum of col 7 and col 8) <br /> column 10: The number (
 \< 10) in this column indicates how many mutant reads in a spot. For
-example, G9 means there are 9 mutant reads in that spotl G10 means there
-are more than 10 mutant reads in the spot. <br /> column 11: proportion
-of mutant to Total reads (col8/col4) <br /> column 12: proportion of
-mutant to sum of ref and mut reads (col8/col9) <br /> column 13: A
-binary column, when the spot has \> 1 mutant read, it is 1, otherwise,
-it is 0. <br /> column 14: A score calculated based on the ref and
-mutant read counts. The higher the score is, the more likely it is a
-tumor spot. The table is ordered by this column. <br /> column 15:
-Details on which genes containing what mutations in which spots. <br />
+example, G9 means there are 9 mutant reads in that spot. However, G10
+means there are more than 10 mutant reads in the spot. <br /> column 11:
+Proportion of # of mutant reads to Total reads (col8/col4) <br /> column
+12: Proportion of # of mutant reads to sum of ref and mut reads
+(col8/col9) <br /> column 13: A binary column, when the spot has \> 1
+mutant read, it is 1, otherwise, it is 0. <br /> column 14: A score
+calculated based on the # of ref and mutant read counts. The higher the
+score is, the more likely it is a tumor spot. The table is sorted by
+this column. <br /> column 15: Details on which genes contain what
+mutations in which spots. <br />
 
-############################################## 
+## II. Copy Number Variation Detection
 
-The following three functions are used for spots CNVs visualization. An
-example to run wtArmMedianOne function
+accStartCNR_CNS and bulkCNVs functions are used to generate arm-level
+bulk CNVs plot. <br /> wtArmMedianOne, CtArmGenes, cdt_filt_sort
+functions are used in generating spot CNVs heatmap. Case studay please
+refer
+[here](https://github.com/limin321/stmut/blob/master/FigTableScripts/FigTables.md#spatial-spot-cnvs-figure-3)
+<br />
+
+An example to run wtArmMedianOne function
 
 ``` r
 library(stmut)
@@ -308,3 +349,16 @@ head(df7)
 #> 5           -0.01796844          -0.05211491
 #> 6           -0.01796844          -0.05211491
 ```
+
+## III. Allelic Imbalance
+
+accumStartPos and bulkLOHplot functions are for bulk DNAseq allelic
+imbalance plot. The patient4_hg38_SNPs.txt and patient6_hg38_SNPs.txt
+files, which are saved
+[here](https://github.com/limin321/stmut/blob/master/VisualizingSomaticAlterations/DNAseqResourceFiles/),
+are used to count the # of major and minor alleles of each spot in
+patient4 and patient6.
+
+Scripts generating the allelic imbalance figures(Figure 4 and Figure S6)
+in the manuscript is
+[here](https://github.com/limin321/stmut/blob/master/FigTableScripts/FigTables.md#bulk-dnaseq-allelic-imbalance)

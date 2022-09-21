@@ -1,4 +1,13 @@
-load packages
+# stmut user guide — scripts of figures and tables for the manuscript.
+
+stmut was developed for analyses of 10x spatial transcriptomics data
+when preparing the
+[manuscript](place%20holder%20for%20the%20manuscirpt).
+
+This instruction provides an example of how to perform CNVs, point
+mutation, and allelic imbalance of 10x spatial transcriptomics data.
+
+# load packages
 
     library(dplyr)
 
@@ -105,7 +114,7 @@ load packages
     ## Warning: replacing previous import 'phylogram::as.phylo' by 'ape::as.phylo' when
     ## loading 'SpatialInferCNV'
 
-    source("/Volumes/Bastian/Limin/projects/scripts/ST_RNA/rFunctions.R")
+    #source("/Volumes/Bastian/Limin/projects/scripts/ST_RNA/rFunctions.R")
 
 ## Table S1
 
@@ -298,15 +307,9 @@ organized for patient 4 of p4.cdt.
 
     cnr <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/CNV/P6_T.deduplicated.realign.cnr", sep = "\t", header = TRUE)
     cns <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/CNV/P6_T.deduplicated.realign.cns", sep = "\t", header = TRUE)
-    centromere <- read.table("/Volumes/Bastian/Limin/reference/hg38_centromereSimple.bed", sep = "\t", header = FALSE)
+    centromere <- read.table("/Volumes/Bastian/Limin/reference/hg19/Centromere.bed")
+
     bulkCNVs(centmere = centromere, dcnr = cnr, dcns = cns)
-
-    ## Warning in max(data$start): no non-missing arguments to max; returning -Inf
-
-    ## Warning in max(data$end): no non-missing arguments to max; returning -Inf
-
-    ## Warning: Continuous limits supplied to discrete scale.
-    ## Did you mean `limits = factor(...)` or `scale_*_continuous()`?
 
     ## Warning: Removed 3373 rows containing missing values (geom_point).
 
@@ -881,10 +884,9 @@ visualized in JavaTreeview to make Figure3.
     loh <- LOH[,c("Chr","hg38_start","hg38_end","TumorShift")]
     colnames(loh) <- c("chromosome", "start", "end","tumorshift")
     loh$chromosome <- substr(loh$chromosome,4, nchar(loh$chromosome))
-    bulkLOHplot(centmere = centromere, alle_imbal = loh)
+    centromere <- read.table("/Volumes/Bastian/Limin/reference/hg19/Centromere.bed")
 
-    ## Warning: Continuous limits supplied to discrete scale.
-    ## Did you mean `limits = factor(...)` or `scale_*_continuous()`?
+    bulkLOHplot(centmere = centromere, alle_imbal = loh)
 
     ## Warning: Removed 26 rows containing missing values (geom_point).
 

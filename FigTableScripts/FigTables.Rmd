@@ -4,8 +4,12 @@ author: "LiminChen"
 date: "9/15/2022"
 output: md_document
 ---
+# stmut user guide --- scripts of figures and tables for the manuscript.
+stmut was developed for analyses of 10x spatial transcriptomics data when preparing the [manuscript](place holder for the manuscirpt).
 
-load packages
+This instruction provides an example of how to perform CNVs, point mutation, and allelic imbalance of 10x spatial transcriptomics data.
+
+# load packages
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -26,7 +30,7 @@ library(hdf5r)
 library(infercnv)
 library(SpatialInferCNV)
 
-source("/Volumes/Bastian/Limin/projects/scripts/ST_RNA/rFunctions.R")
+#source("/Volumes/Bastian/Limin/projects/scripts/ST_RNA/rFunctions.R")
 ```
 
 
@@ -220,7 +224,8 @@ Then manually move some rows order to make the visualization more organized for 
 ```{r}
 cnr <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/CNV/P6_T.deduplicated.realign.cnr", sep = "\t", header = TRUE)
 cns <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/CNV/P6_T.deduplicated.realign.cns", sep = "\t", header = TRUE)
-centromere <- read.table("/Volumes/Bastian/Limin/reference/hg38_centromereSimple.bed", sep = "\t", header = FALSE)
+centromere <- read.table("/Volumes/Bastian/Limin/reference/hg19/Centromere.bed")
+
 bulkCNVs(centmere = centromere, dcnr = cnr, dcns = cns)
 ```
 
@@ -749,6 +754,8 @@ LOH <- read.table("/Volumes/Bastian/Limin/Ji_data/Patient6/BulkDNASeq/LOH/Mpileu
 loh <- LOH[,c("Chr","hg38_start","hg38_end","TumorShift")]
 colnames(loh) <- c("chromosome", "start", "end","tumorshift")
 loh$chromosome <- substr(loh$chromosome,4, nchar(loh$chromosome))
+centromere <- read.table("/Volumes/Bastian/Limin/reference/hg19/Centromere.bed")
+
 bulkLOHplot(centmere = centromere, alle_imbal = loh)
 
 ```
